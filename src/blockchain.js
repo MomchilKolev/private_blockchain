@@ -64,11 +64,16 @@ class Blockchain {
     return new Promise(async (resolve, reject) => {
       try {
         this.height++;
-        let newBlock = new BlockClass(block);
-        newBlock.height = this.height;
+        let previousBlockHash = null;
         if (this.height > 0) {
-          newBlock.previousBlockHash = this.chain[this.height - 1].hash;
+          previousBlockHash = this.chain[this.height - 1].hash;
         }
+        let newBlock = new BlockClass({
+          ...block,
+          height: this.height,
+          previousBlockHash,
+        });
+        newBlock.height = this.height;
         this.chain.push(newBlock);
         resolve(newBlock);
       } catch (err) {
@@ -192,18 +197,20 @@ class Blockchain {
     let errorLog = [];
     return new Promise(async (resolve, reject) => {
       resolve(
-        this.chain.reduce((acc, curr, index, arr) => {
-          let isValid = curr.validate();
-          let previousBlock = arr[index - 1];
-          let validHash = true;
+        this.chain.reduce(async (acc, curr, index, arr) => {
+          acc = await acc;
+          let isBlockValid = await curr.validate();
+          let validPreviousHash = true;
           if (index > 0)
-            validHash = curr.previousBlockHash === arr[index - 1].hash;
-          if (!isValid || !validHash) {
-            return {
-              isValid,
-              validHash,
-            };
+            validPreviousHash = curr.previousBlockHash === arr[index - 1].hash;
+          if (!isBlockValid || !validPreviousHash) {
+            acc = acc.concat({
+              height: index,
+              isBlockValid,
+              validPreviousHash,
+            });
           }
+          return acc;
         }, [])
       );
     });

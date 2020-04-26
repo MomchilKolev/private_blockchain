@@ -15,13 +15,13 @@ const hex2ascii = require("hex2ascii");
 class Block {
   // Constructor - argument data will be the object containing the transaction data
   constructor(data) {
-    const { address, ...star } = data;
+    const { address, height, previousBlockHash, ...star } = data;
     this.hash = null; // Hash of the block
-    this.height = 0; // Block Height (consecutive number of each block)
+    this.height = height || 0; // Block Height (consecutive number of each block)
     this.address = data.address || "";
     this.body = Buffer.from(JSON.stringify(star)).toString("hex"); // Will contain the transactions stored in the block, by default it will encode the data
     this.time = new Date().getTime().toString().slice(0, -3); // Timestamp for the Block creation
-    this.previousBlockHash = null; // Reference to the previous Block Hash
+    this.previousBlockHash = previousBlockHash || null; // Reference to the previous Block Hash
 
     this.hash = SHA256(JSON.stringify(this)).toString();
   }
@@ -44,7 +44,9 @@ class Block {
       // Save in auxiliary variable the current block hash
       const currentHash = this.hash;
       // Recalculate the hash of the Block
-      const newHash = SHA256(this).toString();
+      const copy = { ...this, hash: null };
+      copy.hash = null;
+      const newHash = SHA256(JSON.stringify(copy)).toString();
       // Comparing if the hashes changed
       // Returning the Block is not valid
       // Returning the Block is valid

@@ -136,7 +136,9 @@ class BlockchainController {
       } catch (err) {
         return res
           .status(500)
-          .send("An error occurred while trying to validate blockchain:", err);
+          .send(
+            `An error occurred while trying to validate blockchain: ${err}`
+          );
       }
     });
   }
