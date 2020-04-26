@@ -73,7 +73,6 @@ class Blockchain {
           height: this.height,
           previousBlockHash,
         });
-        newBlock.height = this.height;
         this.chain.push(newBlock);
         resolve(newBlock);
       } catch (err) {
@@ -149,6 +148,7 @@ class Blockchain {
     return new Promise((resolve, reject) => {
       let block = this.chain.filter((block) => block.hash === hash)[0];
       if (block.height > 0) resolve(block.getBData());
+      else resolve("No Block Found!");
     });
   }
 
