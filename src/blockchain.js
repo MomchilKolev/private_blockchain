@@ -115,19 +115,14 @@ class Blockchain {
    */
   submitStar(address, message, signature, star) {
     let self = this;
-    console.log("\n\nsubmitStar");
     return new Promise(async (resolve, reject) => {
       let messageTime = parseInt(message.split(":")[1]);
       let currentTime = new Date().getTime().toString().slice(0, -3);
-      console.log("messageTime is", messageTime);
-      console.log("currentTime is", currentTime);
-      if (currentTime < messageTime + 3000) {
+      if (currentTime < messageTime + 300) {
         try {
           const verified = bitcoinMessage.verify(message, address, signature);
-          console.log("\n\nverified", verified);
           if (verified) {
             star.address = address;
-            console.log("\n\n\n star is", star);
             const block = await this._addBlock(star);
             resolve(block);
           }
@@ -147,7 +142,6 @@ class Blockchain {
   getBlockByHash(hash) {
     let self = this;
     return new Promise((resolve, reject) => {
-      console.log("\nthis.chain", this.chain);
       let block = this.chain.filter((block) => block.hash === hash)[0];
       if (block.height > 0) resolve(block.getBData());
     });
@@ -160,7 +154,6 @@ class Blockchain {
    */
   getBlockByHeight(height) {
     let self = this;
-    console.log("\n\ngetBlockByHeight", height);
     return new Promise((resolve, reject) => {
       let block = self.chain.filter((p) => p.height === height)[0];
       if (block && block.height > 0) {
@@ -181,11 +174,6 @@ class Blockchain {
     let self = this;
     let stars = [];
     return new Promise((resolve, reject) => {
-      console.log("\nthis.chain", this.chain);
-      console.log(
-        "\n\n",
-        this.chain.filter((block) => block.address === address)
-      );
       let matches = this.chain.filter((block) => block.address === address);
       //   resolve(matches); // Return blocks without decoding data
       // Decode data within blocks

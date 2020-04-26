@@ -19,13 +19,11 @@ class Block {
     this.hash = null; // Hash of the block
     this.height = 0; // Block Height (consecutive number of each block)
     this.address = data.address || "";
-    console.log("\n\nJSON.stringify(star)", JSON.stringify(star));
     this.body = Buffer.from(JSON.stringify(star)).toString("hex"); // Will contain the transactions stored in the block, by default it will encode the data
     this.time = new Date().getTime().toString().slice(0, -3); // Timestamp for the Block creation
     this.previousBlockHash = null; // Reference to the previous Block Hash
 
     this.hash = SHA256(JSON.stringify(this)).toString();
-    console.log("\n\nthis inside block is", this);
   }
 
   /**
@@ -64,9 +62,7 @@ class Block {
    *     or Reject with an error.
    */
   getBData() {
-    console.log("\nthis outside", this);
     return new Promise((resolve) => {
-      console.log("\nthis inside", this);
       // Getting the encoded data saved in the Block
       // Decoding the data to retrieve the JSON representation of the object
       const decoded = JSON.parse(hex2ascii(this.body));

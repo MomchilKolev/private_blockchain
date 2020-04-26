@@ -22,7 +22,6 @@ class BlockchainController {
   // Enpoint to Get a Block by Height (GET Endpoint)
   getBlockByHeight() {
     this.app.get("/block/:height", async (req, res) => {
-      console.log("\n\n height", req.params);
       if (req.params.height) {
         const height = parseInt(req.params.height);
         let block = await this.blockchain.getBlockByHeight(height);
@@ -93,10 +92,8 @@ class BlockchainController {
   // This endpoint allows you to retrieve the block by hash (GET endpoint)
   getBlockByHash() {
     this.app.get("/block/:hash", async (req, res) => {
-      console.log("\n/block/:hash", req.params);
       if (req.params.hash) {
         const hash = req.params.hash;
-        console.log("\n\nblockHash is", hash);
         let block = await this.blockchain.getBlockByHash(hash);
         if (block) {
           return res.status(200).json(block);
@@ -135,7 +132,6 @@ class BlockchainController {
     this.app.get("/validate", async (req, res) => {
       try {
         let valid = await this.blockchain.validateChain();
-        console.log("\n\nvalid is", valid);
         res.status(200).json(valid || { message: "Blockchain is valid" });
       } catch (err) {
         return res
